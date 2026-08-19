@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://booksphere-backend-djfd.onrender.com/api/",
+    baseURL:
+    import.meta.env.VITE_API_URL || "http://localhost:8000/api/",
     withCredentials: true,
 });
 
@@ -30,6 +31,7 @@ export async function getCSRFToken() {
             getCookie("csrftoken");
 
         return csrfToken;
+
     } catch (error) {
         console.error("Could not get CSRF token:", error);
         throw error;
@@ -38,8 +40,10 @@ export async function getCSRFToken() {
 
 api.interceptors.request.use(
     async (config) => {
+
         const method = config.method?.toLowerCase();
 
+        // Only attach CSRF token to requests that need it
         if (
             method === "post" ||
             method === "put" ||
@@ -68,6 +72,7 @@ api.interceptors.request.use(
 
         return config;
     },
+
     (error) => {
         return Promise.reject(error);
     }
