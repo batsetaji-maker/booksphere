@@ -19,6 +19,7 @@ import EditDiscussion from "./pages/EditDiscussion";
 import NewDiscussion from "./pages/NewDiscussion";
 import AdminBooks from "./pages/AdminBooks";
 import Register from "./pages/Register";
+import Welcome from "./pages/Welcome";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
@@ -36,15 +37,10 @@ function AppContent() {
 
             <Routes>
 
-                <Route
-                    path="/"
-                    element={
-                        <Navigate
-                            to="/dashboard"
-                            replace
-                        />
-                    }
-                />
+               <Route
+    path="/"
+    element={<Welcome />}
+/>
 
                 <Route
                     path="/login"
