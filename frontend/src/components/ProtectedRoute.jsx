@@ -7,28 +7,50 @@ function ProtectedRoute({ children }) {
     const [authenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
+        let mounted = true;
+
         const checkAuthentication = async () => {
             try {
-                const response = await api.get("accounts/me/");
+                const response = await api.get(
+                    "accounts/me/",
+                    {
+                        withCredentials: true,
+                    }
+                );
 
                 console.log("AUTH CHECK:", response.data);
 
-                setAuthenticated(true);
-            } catch (error) {
-                console.log("AUTH CHECK FAILED:", error.response?.status);
+                if (mounted) {
+                    setAuthenticated(true);
+                }
 
-                setAuthenticated(false);
+            } catch (error) {
+                console.log(
+                    "AUTH CHECK FAILED:",
+                    error.response?.status
+                );
+
+                if (mounted) {
+                    setAuthenticated(false);
+                }
+
             } finally {
-                setLoading(false);
+                if (mounted) {
+                    setLoading(false);
+                }
             }
         };
 
         checkAuthentication();
+
+        return () => {
+            mounted = false;
+        };
     }, []);
 
     if (loading) {
         return (
-            <div className="container mt-5">
+            <div className="container mt-5 text-center">
                 <p>Checking authentication...</p>
             </div>
         );
