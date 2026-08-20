@@ -5,33 +5,47 @@ function Navbar() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        try {
-            const csrfResponse = await api.get(
-                "accounts/csrf/"
-            );
+    try {
+        const csrfResponse = await api.get(
+            "accounts/csrf/"
+        );
 
-            const csrfToken =
-                csrfResponse.data.csrfToken;
+        const csrfToken =
+            csrfResponse.data.csrfToken;
 
-            await api.post(
-                "accounts/logout/",
-                {},
-                {
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                    },
-                }
-            );
+        await api.post(
+            "accounts/logout/",
+            {},
+            {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+                withCredentials: true,
+            }
+        );
 
-            navigate("/login");
+        // Clear any frontend-stored authentication data
+        localStorage.removeItem("user");
+        localStorage.removeItem("authUser");
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("authUser");
 
-        } catch (error) {
-            console.error(
-                "Logout failed:",
-                error
-            );
-        }
-    };
+        // Completely restart the application at login
+        window.location.href = "/login";
+
+    } catch (error) {
+        console.error("Logout failed:", error);
+
+        // Clear frontend authentication data even if
+        // the server request fails.
+        localStorage.removeItem("user");
+        localStorage.removeItem("authUser");
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("authUser");
+
+        window.location.href = "/login";
+    }
+};
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
